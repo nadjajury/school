@@ -1,0 +1,147 @@
+#-------------------------------------------------------------------------------
+# Name:        school (Task 9/10)
+# Purpose:     to collect information about schools, including their names, student number, and classroom number
+
+# History:    V3 - added GUI interface
+#
+# Author:      Nadja Jury
+#
+# Created:     07/06/2014
+# Copyright:   (c) Nadja Jury 2014
+# Licence:     <your licence>
+#-------------------------------------------------------------------------------
+#!/usr/bin/env python
+
+def main():
+    pass
+
+if __name__ == '__main__':
+    main()
+
+import csv
+from tkinter import *
+import tkinter.messagebox
+
+
+class School:
+    def __init__(self, school_name, roll_size, num_classrooms):
+        self.school_name = school_name
+        self.roll_size = roll_size
+        self.num_classrooms = num_classrooms
+
+    def get_school_name(self):
+        return self.school_name
+
+    def get_roll_size(self):
+        return self.roll_size
+
+    def get_num_classrooms(self):
+        return self.num_classrooms
+
+# end of indenting means end of class definition
+
+#creates the GUI interface
+class GUI:
+
+    def __init__(self):
+
+        # similar to root in other texts
+        window = Tk()
+        window.title("Data Entry Screen")
+        #setting root window and size
+        window.minsize(width=400, height=200)
+
+
+        #INITIALIZATION VARIABLES
+        #this variable stores whether the data has been validated or not
+        self.ready_to_write = False
+        #this will contain the list of all books entered via the gui
+        self.recordlist = []
+
+        #creating a title label for the top of the window
+        title_label = Label(window, text='School Data', bg='black', fg='white', font=('Arial', '24', 'bold'))
+        title_label.pack()
+
+        #creating label and field variable in GUI for each entry field
+        school_name_label = Label(window, text='Enter name of school:', bg='rosy brown', fg='white')
+        school_name_label.pack() #.pack() places the component in the window
+        self.school_name_field = Entry(window)
+        self.school_name_field.pack()
+
+        roll_size_label = Label(window, text='Enter number of students:', bg='coral', fg='white')
+        roll_size_label.pack()
+        self.roll_size_field = Entry(window)
+        self.roll_size_field.pack()
+
+        num_classrooms_label = Label(window, text='Enter number of classrooms:', bg='sienna', fg='white')
+        num_classrooms_label.pack()
+        self.num_classrooms_field = Entry(window)
+        self.num_classrooms_field.pack()
+
+        #creates a button. The command function is run when the button is pressed
+        #the 'command=self.doSubmit' is an example of a callback method
+        button_label = Label(window, text='Press to validate:')
+        button = Button(window, text='Submit', command=self.doSubmit)
+
+        button_label1 = Label(window, text='Convert Record to csv')
+        button1 = Button(window, text='write to csv', command=self.writetocsv)
+        button_label.pack()
+        button.pack()
+        button_label1.pack()
+        button1.pack()
+
+        #waiting for user input - event driven program
+        window.mainloop() #infinitely waiting loop
+
+
+    def doSubmit(self):
+        #this is the callback method for the 'Submit' button
+        if len(self.school_name_field.get()) <1 or len(self.roll_size_field.get()) <1 or len(self.num_classrooms_field.get()) <1:
+            tkinter.messagebox.showwarning('Warning!','Please enter a value for all fields')
+        else:
+            try:
+                validated_roll_size_field = int(self.roll_size_field.get())
+
+                try:
+                    validated_num_classrooms_field = int(self.num_classrooms_field.get())
+                    self.recordlist.append(School(self.school_name_field.get(),self.roll_size_field.get(), self.num_classrooms_field.get()))
+                    self.ready_to_write= True
+                    tkinter.messagebox.showinfo('Notice','Submission Sucessful')
+
+                    self.school_name_field.delete(0, END) #command to clear field
+                    self.roll_size_field.delete(0, END)
+                    self.num_classrooms_field.delete(0, END)
+
+                except:
+                        tkinter.messagebox.showwarning('Warning!', 'Please enter a number for the number of classrooms')
+                        print('Please enter a number for the number of classrooms')
+
+            except:
+                tkinter.messagebox.showwarning('Warning!','Please enter a number for number of students')
+                print('Please enter a number for number of students')
+
+
+    def writetocsv(self):
+        #this is the callback method for the 'write to csv' button
+        import csv
+        file_name = 'schooldatabase.txt'
+
+        if self.ready_to_write: #cheacks data has been previously validated
+            ofile = open(file_name, 'a') #open with write('w') or append('a') privelages
+            writer = csv.writer(ofile, delimiter=',')
+            #cycles through list of records created by gui
+            for record in self.recordlist:
+                print(record.get_school_name())
+                writer.writerow([record.get_school_name(),record.get_roll_size(), record.get_num_classrooms()])
+            #explicitly closes the output file
+            ofile.close()
+        else:
+            tkinter.messagebox.showwarning('Error!', 'You need to Validate your data')
+
+        self.ready_to_write= False
+        tkinter.messagebox.showinfo('Notice',file_name+' File Generated Sucessfully')
+
+
+
+#main routine
+GUI ()
