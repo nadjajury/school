@@ -1,0 +1,76 @@
+#-------------------------------------------------------------------------------
+# Name:        school (Task 9/10)
+# Purpose:
+#
+# Author:      Nadja Jury
+#
+# Created:     07/06/2014
+# Copyright:   (c) Nadja Jury 2014
+# Licence:     <your licence>
+#-------------------------------------------------------------------------------
+#!/usr/bin/env python
+
+def main():
+    pass
+
+if __name__ == '__main__':
+    main()
+
+import csv
+
+class School:
+    def __init__(self, school_name, student_num, classroom_num):
+        self.school_name = school_name
+        self.student_num = student_num
+        self.classroom_num = classroom_num
+
+    def average_per_class(self):
+        return self.student_num/self.classroom_num
+
+    def show_information(self):
+        """
+        >>> s = School("Eveyln Intermediate", 1500, 96)
+        >>> s.show_information()
+        Eveyln Intermediate has 15.62 pupils per room
+        """
+        print("{0} has {1:.2f} pupils per room".format(self.school_name, self.average_per_class()))
+#end of indenting means end of class definition
+
+#get_values is an ordinary function
+def get_values():
+    global school_name
+    global student_num
+    global classroom_num
+    school_name = input("Name of school: ")
+    student_num = int(input("Number of students at the school: "))
+    classroom_num = int(input("Number of classrooms in the school: "))
+
+#main routine
+if __name__== "__main__":
+    import doctest
+    doctest.testmod(verbose = False)
+    x = int(input("How many schools will you be entering?"))
+    schools = []
+    for i in range(x):
+        get_values()
+        schools.append(School(school_name,student_num,classroom_num))
+    for school in schools:
+        school.show_information()
+
+file_name = 'schoolsdb.txt'
+
+ofile = open(file_name, 'w') #open with write('w') or append('a') privelages
+writer = csv.writer(ofile, delimiter=',')
+
+
+for i in range (0, len(schools)):
+# below code is for debugging
+##    print(schools[i].school_name)
+##    print(schools[i].roll_size)
+##    print(schools[i].num_classrooms)
+
+
+   writer.writerow([schools[i].school_name,schools[i].student_num,schools[i].classroom_num])
+
+#closes the created file
+ofile.close()
